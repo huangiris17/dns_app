@@ -6,7 +6,7 @@ RUN apt-get update \
 
 
 RUN groupadd -g 799 nyu && \
-    useradd -r -u 999 -g nyu nyu
+  useradd -r -u 999 -g nyu nyu
 
 # Set up a working folder and install the pre-reqs
 WORKDIR /app
@@ -17,4 +17,4 @@ USER nyu
 
 COPY --chown=nyu:nyu . .
 
-CMD [ "python", "./run.py" ]
+CMD [ "python", "./server.py" ]
