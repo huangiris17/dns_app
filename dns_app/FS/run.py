@@ -6,28 +6,42 @@ app = Flask(__name__)
 UDP_IP = "0.0.0.0"
 UDP_PORT = 53533
 
+# body = jsonify(hostname=hostname,
+#                ip='172.18.0.2',
+#                as_ip='0.0.0.0',
+#                as_port='53533'
+#                )
+
+
+@app.route("/home", methods=['GET'])
+def home():
+    return "Hi!"
+
 
 def register_AS(hostname, ip, as_ip, as_port):
-    body = {'NAME': hostname, 'VALUE': ip, 'TYPE': 'A', 'TTL': 10}
+    body = {'TYPE': 'A', 'NAME': hostname, 'VALUE': ip, 'TTL': 10}
     message = json.dumps(body).encode('utf-8')
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(message, (UDP_IP, UDP_PORT))
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((as_ip, as_port))
+        s.sendall(message)
+        response = s.recv(1024)  # DNS response from AS, JSON
 
-    return 'Created', 201
+    return response
 
 
 @app.route("/register", methods=['PUT'])
 def registerFib():
-    data = request.get_json()
-    hostname = data.get('hostname')
-    ip = data.get('ip')
-    as_ip = data.get('as_ip')
-    as_port = data.get('as_port')
+    return "PUT SUCCESS"
+    # data = request.get_json()
+    # hostname = data.get('hostname')
+    # ip = data.get('ip')
+    # as_ip = data.get('as_ip')
+    # as_port = data.get('as_port')
 
-    if not all([hostname, ip, as_ip, as_port]):
-        return 'Bad Request', 400
+    # if not all([hostname, ip, as_ip, as_port]):
+    #     return 'Bad Request', 400
 
-    return register_AS(hostname, ip, as_ip, as_port)
+    # return register_AS(hostname, ip, as_ip, as_port)
 
 
 def fibonacci(x):
