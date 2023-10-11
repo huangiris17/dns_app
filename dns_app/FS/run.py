@@ -21,27 +21,27 @@ def home():
 def register_AS(hostname, ip, as_ip, as_port):
     body = {'TYPE': 'A', 'NAME': hostname, 'VALUE': ip, 'TTL': 10}
     message = json.dumps(body).encode('utf-8')
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((as_ip, as_port))
-        s.sendall(message)
-        response = s.recv(1024)  # DNS response from AS, JSON
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.sendto(message, (as_ip, as_port))
+    response, addr = s.recv(2048)  # DNS response from AS, JSON
+    s.close()
 
     return response
 
 
 @app.route("/register", methods=['PUT'])
 def registerFib():
-    return "PUT SUCCESS"
-    # data = request.get_json()
-    # hostname = data.get('hostname')
-    # ip = data.get('ip')
-    # as_ip = data.get('as_ip')
-    # as_port = data.get('as_port')
+    # return "PUT SUCCESS"
+    data = request.get_json()
+    hostname = data.get('hostname')
+    ip = data.get('ip')
+    as_ip = data.get('as_ip')
+    as_port = data.get('as_port')
 
-    # if not all([hostname, ip, as_ip, as_port]):
-    #     return 'Bad Request', 400
+    if not all([hostname, ip, as_ip, as_port]):
+        return 'Bad Request', 400
 
-    # return register_AS(hostname, ip, as_ip, as_port)
+    return register_AS(hostname, ip, as_ip, as_port)
 
 
 def fibonacci(x):

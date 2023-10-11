@@ -26,10 +26,10 @@ def fibonacci():
     body = {'NAME': hostname, 'TYPE': 'A'}
     message = json.dumps(body).encode('utf-8')
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((as_ip, as_port))
-        s.sendall(message)
-        data = s.recv(1024)  # DNS response from AS, JSON
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.sendto(message, (as_ip, as_port))
+    data, addr = s.recv(2048)  # DNS response from AS, JSON
+    s.close()
 
     if fs_port != data.get("VALUE"):
         return 'Bad Request', 400

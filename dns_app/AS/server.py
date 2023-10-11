@@ -9,24 +9,21 @@ def listen():
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((UDP_IP, UDP_PORT))
-    sock.listen()
-    conn, addr = sock.accept()
+    # sock.listen()
+    # conn, addr = sock.accept()
 
-    with conn:
-        data = conn.recv(1024)
+    while True:
+        data, addr = socket.recvfrom(1024)
+        data = data.decode('utf-8')
+        response = None
 
-        while True:
-            data, addr = socket.recvfrom(1024)
-            data = data.decode('utf-8')
-            response = None
+        if data.get("VALUE"):
+            response = use_registration(data)
 
-            if data.get("VALUE"):
-                response = use_registration(data)
+        else:
+            response = use_dns_query(data)
 
-            else:
-                response = use_dns_query(data)
-
-            conn.sendall(response)
+        conn.sendall(response)
 
 
 def use_registration(data):
