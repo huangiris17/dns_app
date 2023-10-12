@@ -16,8 +16,9 @@ def main():
         data = data.decode()
         response = None
 
-        if data.get("VALUE"):
-            response = use_registration(data)
+        if data.get("VALUE") is not None:
+            response = "success"
+            # response = use_registration(data)
 
         else:
             response = use_dns_query(data)

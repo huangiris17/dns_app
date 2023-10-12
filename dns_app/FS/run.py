@@ -4,8 +4,6 @@ import socket
 # APP1
 
 app = Flask(__name__)
-UDP_IP = "0.0.0.0"
-UDP_PORT = 53533
 
 
 @app.route("/home", methods=['GET'])
@@ -19,7 +17,7 @@ def register_AS(hostname, ip, as_ip, as_port):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.sendto(message, (as_ip, as_port))
     response, addr = s.recv(2048)  # DNS response from AS, JSON
-    s.close()
+    # s.close()
 
     return response.decode()
 
